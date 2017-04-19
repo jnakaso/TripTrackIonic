@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons start>
+      <button ion-button (click)="dismiss()">
+        <span ion-text color="primary">Cancel</span>
+      </button>
+    </ion-buttons>
+    <ion-searchbar #searchInput [ngModel]="filter" (input)="changeFilter($event)" autofocus></ion-searchbar>
+    <ion-buttons end>
+      <button ion-button (click)="submit()">
+        <span ion-text color="primary">Done</span>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item style="cursor:pointer" *ngFor="let dest of getFiltered()" (click)="selectDest(dest)">
+      <h2>{{dest.name}}</h2>
+      <span item-right>{{dest.distance}} mi.</span>
+    </ion-item>
+  </ion-list>
+</ion-content>

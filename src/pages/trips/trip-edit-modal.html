@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons start>
+      <button ion-button (click)="dismiss()">
+        <span ion-text color="primary">Cancel</span>
+      </button>
+    </ion-buttons>
+    <ion-buttons end>
+      <button ion-button (click)="submit()">
+        <span ion-text color="primary">Done</span>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <trip-editor [trip]="trip"></trip-editor>
+</ion-content>

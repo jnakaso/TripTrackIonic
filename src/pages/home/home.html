@@ -1,0 +1,14 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Track your trip!
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <trip-editor [trip]="trip"></trip-editor>
+  <div padding>
+    <button ion-button color="primary" block [disabled]="isNotValid()" (click)="submit()">Track It!</button>
+  </div>
+</ion-content>

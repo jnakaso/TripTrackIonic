@@ -1,0 +1,32 @@
+ <ion-list>
+    <ion-item>
+      <ion-label stacked>Date (mm-dd-yyyy)</ion-label>
+      <ion-datetime displayFormat="MMM-DD-YYYY" pickerFormat="MMM DD YYYY" [(ngModel)]="trip.date"></ion-datetime>
+    </ion-item>
+
+    <ion-item>
+      <ion-label stacked>Destination</ion-label>
+      <ion-input type="text" [(ngModel)]="trip.destination" (focus)="pickDest()"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label stacked>Distance</ion-label>
+      <ion-input type="number" step="0.1" [(ngModel)]="trip.distance"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label stacked>Time (hh:mm)</ion-label>
+      <ion-datetime displayFormat="hh:mm" [(ngModel)]="trip.time"></ion-datetime>
+    </ion-item>
+
+    <ion-item>
+      <ion-label stacked>Expense</ion-label>
+      <ion-input type="number" step="0.01" [(ngModel)]="trip.expense"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label stacked>Notes</ion-label>
+      <ion-input type="text" [(ngModel)]="trip.notes"></ion-input>
+    </ion-item>
+
+  </ion-list>

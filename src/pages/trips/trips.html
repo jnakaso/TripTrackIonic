@@ -1,0 +1,74 @@
+<ion-menu id="tripMenu" type="overlay" [content]="tcontent">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Tools</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content class="has-header">
+    <ion-list radio-group [(ngModel)]="sort">
+      <ion-item>
+        <ion-label>Sort By Destination</ion-label>
+        <ion-radio value="dest" menuClose></ion-radio>
+      </ion-item>
+      <ion-item menuClose>
+        <ion-label>Sort By Distance</ion-label>
+        <ion-radio value="dist" menuClose></ion-radio>
+      </ion-item>
+      <ion-item>
+        <ion-label>Sort By Date</ion-label>
+        <ion-radio value="date" menuClose></ion-radio>
+      </ion-item>
+    </ion-list>
+    <ion-list>
+      <ion-item style="cursor:pointer" navClear menuClose (click)="export()">
+        Export
+      </ion-item>
+      <ion-item style="cursor:pointer" navClear menuClose (click)="clear()">
+        Erase All...
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+<ion-nav #tcontent></ion-nav>
+<ion-header>
+  <ion-navbar>
+    <ion-buttons start>
+      <button ion-button icon-only (click)="openMenu()">
+        <ion-icon name="menu"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>
+      Trips
+    </ion-title>
+    <ion-buttons end>
+      <span>{{getFiltered().length }} / {{trips.length}}</span>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+<ion-content>
+  <ion-searchbar [(ngModel)]="filter"></ion-searchbar>
+  <ion-list>
+    <ion-item-sliding *ngFor="let trip of getFiltered()">
+      <ion-item (click)="edit(trip)">
+        <h3>{{trip.destination}}</h3>
+        <p>
+          <span>{{trip.distance}} mi.</span>
+          <span *ngIf="trip.time"> | {{trip.time}}</span>
+        </p>
+        <p>
+          <span *ngIf="trip.expense">{{trip.expense | currency:'USD':true:'1.2-2'}}</span>
+          <span *ngIf="trip.notes"> | {{trip.notes}}</span>
+        </p>
+        <p item-right>
+          <span>{{trip.date | date: "MMMM-dd-yyyy"}}</span>
+        </p>
+      </ion-item>
+      <ion-item-options side="right">
+        <button ion-button color="danger" (click)="delete(trip.id)">
+              <ion-icon name="trash"></ion-icon>
+              Delete
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+</ion-content>

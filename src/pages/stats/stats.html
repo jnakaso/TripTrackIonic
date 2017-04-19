@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Stats
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+  <ion-card>
+    <ion-card-header class="card-ios-light">
+      Totals
+    </ion-card-header>
+    <ion-list>
+      <ion-item>
+        <h2>Today</h2>
+        <span item-right>{{today.distance | number:'1.1-1' }} mi. / {{today.trips}} </span>
+      </ion-item>
+      <ion-item>
+        <h2>This Week</h2>
+        <span item-right>{{week.distance | number:'1.1-1' }} mi. / {{week.trips}} </span>
+      </ion-item>
+      <ion-item>
+        <h2>This Month</h2>
+        <span item-right>{{month.distance | number:'1.1-1' }} mi. / {{month.trips}} </span>
+      </ion-item>
+      <ion-item>
+        <h2>This Year</h2>
+        <span item-right>{{year.distance | number:'1.1-1' }} mi. / {{year.trips}} </span>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header class="card-ios-light">
+      Recent
+    </ion-card-header>
+    <ion-list>
+      <ion-item *ngFor="let trip of getFiltered()">
+        <h2>{{trip.destination}}</h2>
+        <span item-right>{{trip.distance}} mi.</span>
+        <p>{{trip.date | date: "MMMM-dd-yyyy"}}</p>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+</ion-content>

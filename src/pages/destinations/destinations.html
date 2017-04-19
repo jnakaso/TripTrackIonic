@@ -1,0 +1,57 @@
+<ion-menu id="destMenu" type="overlay" [content]="destContent">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Tools</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content class="has-header">
+    <ion-list radio-group [(ngModel)]="sort">
+      <ion-item menuClose>
+        <ion-label>Sort By Name</ion-label>
+        <ion-radio value="name"></ion-radio>
+      </ion-item>
+      <ion-item menuClose>
+        <ion-label>Sort By Distance</ion-label>
+        <ion-radio value="dist"></ion-radio>
+      </ion-item>
+    </ion-list>
+    <ion-list>
+      <ion-item style="cursor:pointer" navClear menuClose (click)="clear()">
+        Erase All...
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+<ion-nav #destContent></ion-nav>
+<ion-header>
+  <ion-navbar>
+    <ion-buttons start>
+      <button ion-button icon-only (click)="openMenu()">
+        <ion-icon name="menu"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>
+      Destinations
+    </ion-title>
+    <ion-buttons end>
+      <span>{{getFiltered().length}} / {{destinations.length}}</span>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+<ion-content>
+  <ion-searchbar [(ngModel)]="filter"></ion-searchbar>
+  <ion-list>
+    <ion-item-sliding *ngFor="let dest of getFiltered()">
+      <ion-item>
+        <h2>{{dest.name}}</h2>
+        <span item-right>{{dest.distance}} mi.</span>
+      </ion-item>
+      <ion-item-options side="right">
+        <button ion-button color="danger" (click)="delete(dest.id)">
+              <ion-icon name="trash"></ion-icon>
+              Delete
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+</ion-content>
