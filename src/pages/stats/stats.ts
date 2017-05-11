@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, Events } from 'ionic-angular';
-import { Trip, Total, DateRange } from "../../app/triptrack";
+import { Total, DateRange, TT_newDate } from "../../app/triptrack";
 import { TripsService } from "../../app/trips.service";
 import { StatsService } from "../../app/stats.service";
 
@@ -9,48 +9,59 @@ import { StatsService } from "../../app/stats.service";
   templateUrl: 'stats.html'
 })
 export class StatsPage {
-  trips: Trip[] = [];
-  today: Total = new Total();
-  week: Total = new Total();
-  month: Total = new Total();
-  year: Total = new Total();
+  dateRange = "day";
+  desttotals = new Map<string, Total>();
+  total: Total = new Total();
+  destinations = [];
 
   constructor(public navCtrl: NavController,
     private tripsService: TripsService,
     private statsService: StatsService,
     private events: Events) {
 
-    this.refresh();
-    this.refreshTotals();
-
-    events.subscribe('trips:changed', (trip, time) => {
-      console.log("trips:changed");
-      this.refresh();
-    });
-
     events.subscribe('totals:changed', (result) => {
-      console.log("totals:changed", result);
       this.refreshTotals();
+      this.refreshDestTotals();
     });
   }
 
-  getFiltered = () => {
-    return this.trips
-      .sort(this.tripsService.dateSort)
-      .slice(0, 5);
-  }
-
-  refresh = () => {
-    this.tripsService.query(t => this.trips = t);
+  ionViewWillEnter = () => {
+    this.refreshTotals();
+    this.refreshDestTotals();
   }
 
   refreshTotals = () => {
-    let today = new Date();
-    this.statsService.findMatching(DateRange.day, today, tot => this.today = tot);
-    this.statsService.findMatching(DateRange.week, today, tot => this.week = tot);
-    this.statsService.findMatching(DateRange.month, today, tot => this.month = tot);
-    this.statsService.findMatching(DateRange.year, today, tot => this.year = tot);
+    this.statsService.findMatching(this.getDateRange(), TT_newDate(), (tot: Total) => this.total = tot);
   }
 
+  refreshDestTotals = () => {
+    this.statsService.queryDestTotals((dts: Map<string, Total>) => {
+      this.destinations = [];
+      this.desttotals.clear();
+      dts.forEach((v, k, m) => {
+        this.destinations.push(k);
+        this.desttotals.set(k, v);
+      });
+      this.destinations.sort();
+    });
+  }
+
+  getTotal = (dest) => {
+    return this.desttotals.get(dest);
+  }
+  getDateRange = () => {
+    switch (this.dateRange) {
+      case "day": return DateRange.day;
+      case "week": return DateRange.week;
+      case "month": return DateRange.month;
+      case "year": return DateRange.year;
+    }
+  }
+
+  changeDateRange = (dateRange) => {
+    console.log(this.total);
+    this.dateRange = dateRange;
+    this.refreshTotals();
+  }
 
 }

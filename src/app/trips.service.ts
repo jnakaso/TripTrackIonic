@@ -11,11 +11,12 @@ export class TripsService {
     constructor(private storage: Storage,
         private events: Events,
         private socialSharing: SocialSharing) {
+
     }
 
     newInstance = (): Trip => {
         let trip = new Trip();
-        trip.date = this.calcAdjustedDate(new Date().toString()).toISOString();
+        trip.date = this.calcAdjustedDate(new Date().toString());
         return trip;
     }
 
@@ -30,12 +31,14 @@ export class TripsService {
     }
 
     query = (success: Function) => {
-        let items: Trip[] = [];
-        this.storage.forEach((v, k, i) => {
-            if (k.startsWith('trip ')) {
-                items.push(this.getObject(v));
-            }
-        }).then(t => success(items));
+        this.storage.ready().then(() => {
+            let items: Trip[] = [];
+            this.storage.forEach((v, k, i) => {
+                if (k.startsWith('trip ')) {
+                    items.push(this.getObject(v));
+                }
+            }).then(t => success(items));
+        })
     }
 
     create = (trip: Trip, success: Function) => {
@@ -81,26 +84,21 @@ export class TripsService {
     getObject = (v: any): Trip => {
         let t = JSON.parse(v);
         t.distance = t.distance ? parseFloat(t.distance) : undefined;
-        if (t.date.indexOf('GMT') > 0) {
-            t.date = this.calcAdjustedDate(t.date).toISOString();
+        if (t.date.indexOf('GMT') > 0 || t.date.indexOf('Z') > 0) {
+            t.date = this.calcAdjustedDate(t.date);
         }
         t.expense = t.expense ? parseFloat(t.expense) : undefined;
         return t;
     }
 
     between = (trip: Trip, start: string, end: string): boolean => {
-        // let tTime = this.calcAdjustedDate(new Date().toString()).getTime();
-        // console.log("s", start, "e", end);
-        // return this.calcAdjustedDate(start.toString()).getTime() <= tTime
-        //     && tTime < this.calcAdjustedDate(end.toString()).getTime();
-
         return start <= trip.date && trip.date < end;
     }
 
-    calcAdjustedDate = (dateString: string): Date => {
+    calcAdjustedDate = (dateString: string): string => {
         let aDate = new Date(dateString);
         aDate.setMinutes(aDate.getMinutes() - aDate.getTimezoneOffset());
-        return aDate;
+        return aDate.toISOString().substring(0, 10);
     }
 
     dateSort = (s1: Trip, s2: Trip): number => { return new Date(s2.date).getTime() - new Date(s1.date).getTime() }

@@ -5,81 +5,84 @@ import { Destination } from "../../app/triptrack";
 import { DestinationService } from "../../app/destination.service";
 
 @Component({
-  selector: 'page-destinations',
-  templateUrl: 'destinations.html'
+    selector: 'page-destinations',
+    templateUrl: 'destinations.html'
 })
 export class DestinationsPage {
 
-  filter: string = "";
-  sort: string = "name";
-  destinations: Destination[] = [];
+    filter: string = "";
+    sort: string = "name";
+    destinations: Destination[] = [];
 
-  constructor(public navCtrl: NavController,
-    private alertCtrl: AlertController,
-    private menuCtrl: MenuController,
-    private destinationService: DestinationService,
-    private events: Events) {
+    constructor(public navCtrl: NavController,
+        private alertCtrl: AlertController,
+        private menuCtrl: MenuController,
+        private destinationService: DestinationService,
+        private events: Events) {
 
-    this.refresh();
+        console.log("DestinationsPage");
+        events.subscribe('destinations:changed', (trip, time) => {
+            this.refresh();
+        });
+    }
 
-    events.subscribe('destinations:changed', (trip, time) => {
-      this.refresh();
-    });
-  }
+    ionViewWillEnter = () => {
+        this.menuCtrl.enable(false, 'tripMenu');
+        this.menuCtrl.enable(true, 'destMenu');
+        this.refresh();
+    }
 
-  openMenu = () => {
-    this.menuCtrl.enable(false, 'tripMenu');
-    this.menuCtrl.enable(true, 'destMenu');
-    this.menuCtrl.toggle('destMenu');
-  }
+    openMenu = () => {
+        this.menuCtrl.toggle('destMenu');
+    }
 
-  delete = (id: string) => {
-    this.destinationService.delete(id);
-  }
+    delete = (id: string) => {
+        this.destinationService.delete(id);
+    }
 
-  clear = () => {
-    let confirm = this.alertCtrl.create({
-      title: 'Delete All?',
-      message: 'This action cannot be undone.',
-      buttons: [
-        {
-          text: 'Cancel',
-          handler: () => {
-            console.log('Delete all canceled.');
-          }
-        },
-        {
-          text: 'Confirm',
-          handler: () => {
-            console.log('Confirm clicked');
-            this.destinationService.clear();
-          }
+    clear = () => {
+        let confirm = this.alertCtrl.create({
+            title: 'Delete All?',
+            message: 'This action cannot be undone.',
+            buttons: [
+                {
+                    text: 'Cancel',
+                    handler: () => {
+                        console.log('Delete all canceled.');
+                    }
+                },
+                {
+                    text: 'Confirm',
+                    handler: () => {
+                        console.log('Confirm clicked');
+                        this.destinationService.clear();
+                    }
+                }
+            ]
+        });
+        confirm.present();
+    }
+
+    refresh = () => {
+        this.destinationService.query(dd => this.destinations = dd);
+    }
+
+    nameFilter = (d: Destination) => {
+        let check = this.filter ? this.filter.trim().toLowerCase() : "";
+        return d.name.toLowerCase().startsWith(check);
+    }
+
+    getSort = () => {
+        switch (this.sort) {
+            case 'name': return this.destinationService.nameSort;
+            case 'dist': return this.destinationService.distSort;
+            default: return this.destinationService.nameSort;
         }
-      ]
-    });
-    confirm.present();
-  }
+    }
 
-  refresh = () => {
-    this.destinations = this.destinationService.query(-1);
-  }
-
-  nameFilter = (d) => {
-    let check = this.filter ? this.filter.trim().toLowerCase() : "";
-    return d.name.toLowerCase().startsWith(check);
-  }
-
-  nameSort = (s1, s2) => {
-    return s1.name.localeCompare(s2.name);
-  }
-
-  distSort = (s1: Destination, s2: Destination) => {
-    return s1.distance - s2.distance;
-  }
-
-  getFiltered = () => {
-    return this.destinations
-      .filter(this.nameFilter)
-      .sort(this.sort == 'name' ? this.nameSort : this.distSort);
-  }
+    getFiltered = () => {
+        return this.destinations
+            .filter(this.nameFilter)
+            .sort(this.getSort());
+    }
 }

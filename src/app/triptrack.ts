@@ -1,6 +1,8 @@
 export class Total {
     trips: number = 0;
     distance: number = 0;
+    time: number = 0;
+    expenses: number = 0;
 }
 
 export enum DateRange {
@@ -21,6 +23,11 @@ export class Trip {
     expense: number;
     time: string;
     notes: string;
+}
+
+export function TT_newDate(): Date {
+    let now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
 }
 
 export function TT_guid() {

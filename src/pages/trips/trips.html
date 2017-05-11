@@ -48,8 +48,8 @@
 <ion-content>
   <ion-searchbar [(ngModel)]="filter"></ion-searchbar>
   <ion-list>
-    <ion-item-sliding *ngFor="let trip of getFiltered()">
-      <ion-item (click)="edit(trip)">
+    <ion-item-sliding *ngFor="let trip of getFiltered()" (click)="edit(trip)">
+      <ion-item >
         <h3>{{trip.destination}}</h3>
         <p>
           <span>{{trip.distance}} mi.</span>

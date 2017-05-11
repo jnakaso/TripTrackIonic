@@ -1,7 +1,8 @@
  <ion-list>
     <ion-item>
       <ion-label stacked>Date (mm-dd-yyyy)</ion-label>
-      <ion-datetime displayFormat="MMM-DD-YYYY" pickerFormat="MMM DD YYYY" [(ngModel)]="trip.date"></ion-datetime>
+      <ion-datetime displayFormat="MMM-DD-YYYY" pickerFormat="MMM DD YYYY" [ngModel]="trip.date" 
+        (ngModelChange)="dateChange($event)"></ion-datetime>
     </ion-item>
 
     <ion-item>

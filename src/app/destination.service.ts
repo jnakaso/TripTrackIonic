@@ -3,6 +3,8 @@ import { Storage } from '@ionic/storage';
 import { Events } from 'ionic-angular';
 import { Trip, Destination, TT_guid } from './triptrack';
 
+const DEST_PREFIX = "dest " ;
+
 @Injectable()
 export class DestinationService {
 
@@ -17,7 +19,7 @@ export class DestinationService {
         if (trip) {
             let check = trip.destination.trim().toLowerCase();
             this.storage.forEach((v, k, i) => {
-                if (k.startsWith('dest ')) {
+                if (k.startsWith(DEST_PREFIX)) {
                     let match = this.getObject(v);
                     if (match.name.trim().toLowerCase() == check) {
                         if (match.distance != trip.distance) {
@@ -41,10 +43,11 @@ export class DestinationService {
         }
     }
 
-    findMatching = (trip: Trip): Destination[] => {
+    findMatching = (trip: Trip, success: Function) => {
         let check = trip.destination.trim().toLowerCase();
-        return this.query(-1)
-            .filter(d => d.name.trim().toLowerCase() == check);
+        this.query(dd => {
+            success(dd.filter(d => d.name.trim().toLowerCase() == check));
+        })
     }
 
     create = (destination: Destination, success: Function) => {
@@ -61,33 +64,41 @@ export class DestinationService {
     }
 
     delete = (id: string) => {
-        this.storage.remove(`dest ${id}`).then(e => {
+        this.storage.remove(`${DEST_PREFIX}${id}`).then(e => {
             this.events.publish('destinations:changed', id);
         });
     }
 
-    query = (count: number): Destination[] => {
-        let dests: Destination[] = [];
-        this.storage.forEach((v, k, i) => {
-            if (k.startsWith('dest ')) {
-                dests.push(this.getObject(v));
-            }
-        });
-        return dests;
+    query = (success) => {
+        this.storage.ready().then(() => {
+            let items: Destination[] = [];
+            this.storage.forEach((v, k, i) => {
+                if (k.startsWith(DEST_PREFIX)) {
+                    items.push(this.getObject(v));
+                }
+            }).then(() => success(items));
+        })
     }
 
     clear = () => {
         this.storage.keys() //
             .then(keys => {
                 Promise.all(
-                    keys.filter(k => k.startsWith('dest '))
+                    keys.filter(k => k.startsWith(DEST_PREFIX))
                         .map(k => this.storage.remove(k)))
                     .then(r => this.events.publish('destinations:changed', null))
             });
     }
 
-
-    getObject(v: any): Destination {
+    getObject = (v: any): Destination => {
         return JSON.parse(v);
+    }
+
+    nameSort = (s1, s2) => {
+        return s1.name.localeCompare(s2.name);
+    }
+
+    distSort = (s1: Destination, s2: Destination) => {
+        return s1.distance - s2.distance;
     }
 }

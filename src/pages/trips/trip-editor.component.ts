@@ -1,4 +1,4 @@
-import { Component, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NavController, ModalController } from 'ionic-angular';
 import { Trip } from "../../app/triptrack";
 import { TripsService } from "../../app/trips.service";
@@ -16,6 +16,7 @@ export class TripEditor {
   constructor(public navCtrl: NavController,
     private destCtrl: ModalController,
     private tripsService: TripsService) {
+
   }
 
   pickDest = () => {
@@ -35,4 +36,8 @@ export class TripEditor {
     return !(this.trip.destination && this.trip.date && this.trip.distance);
   }
 
+
+  dateChange = (evt: string) => {
+    this.trip.date = evt;
+  }
 }

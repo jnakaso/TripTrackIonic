@@ -17,6 +17,10 @@ export class HomePage {
     this.reset();
   }
 
+  ionViewWillEnter = () => {
+    this.reset();
+  }
+
   submit = () => {
     this.tripsService.create(this.trip, (result: string) => {
       this.showAlert();

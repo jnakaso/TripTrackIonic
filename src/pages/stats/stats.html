@@ -5,44 +5,68 @@
     </ion-title>
   </ion-navbar>
 </ion-header>
-
-<ion-content padding>
-
+<ion-content>
   <ion-card>
-    <ion-card-header class="card-ios-light">
-      Totals
-    </ion-card-header>
-    <ion-list>
-      <ion-item>
-        <h2>Today</h2>
-        <span item-right>{{today.distance | number:'1.1-1' }} mi. / {{today.trips}} </span>
-      </ion-item>
-      <ion-item>
-        <h2>This Week</h2>
-        <span item-right>{{week.distance | number:'1.1-1' }} mi. / {{week.trips}} </span>
-      </ion-item>
-      <ion-item>
-        <h2>This Month</h2>
-        <span item-right>{{month.distance | number:'1.1-1' }} mi. / {{month.trips}} </span>
-      </ion-item>
-      <ion-item>
-        <h2>This Year</h2>
-        <span item-right>{{year.distance | number:'1.1-1' }} mi. / {{year.trips}} </span>
-      </ion-item>
-    </ion-list>
+    <ion-segment [ngModel]="dateRange" (ngModelChange)="changeDateRange($event)">
+      <ion-segment-button value="day">
+        Today
+      </ion-segment-button>
+      <ion-segment-button value="week">
+        Week
+      </ion-segment-button>
+      <ion-segment-button value="month">
+        Month
+      </ion-segment-button>
+      <ion-segment-button value="year">
+        Year
+      </ion-segment-button>
+    </ion-segment>
+    <ion-grid>
+      <ion-row>
+        <ion-col col-6>Trips:</ion-col>
+        <ion-col col-6 text-right>{{total.trips}}</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col col-6>Distance (mi):</ion-col>
+        <ion-col col-6 text-right>{{total.distance | number:'1.1-1' }}</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col col-6>Time (min):</ion-col>
+        <ion-col col-6 text-right>{{total.time}}</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col col-6>Expense:</ion-col>
+        <ion-col col-6 text-right>{{total.expenses | currency:'USD':true:'1.2-2'}}</ion-col>
+      </ion-row>
+    </ion-grid>
   </ion-card>
 
   <ion-card>
     <ion-card-header class="card-ios-light">
-      Recent
+      By Destination
     </ion-card-header>
     <ion-list>
-      <ion-item *ngFor="let trip of getFiltered()">
-        <h2>{{trip.destination}}</h2>
-        <span item-right>{{trip.distance}} mi.</span>
-        <p>{{trip.date | date: "MMMM-dd-yyyy"}}</p>
+      <ion-item *ngFor="let dest of destinations">
+        <h2>{{dest}}</h2>
+        <ion-grid>
+          <ion-row>
+            <ion-col col-6><p>Trips:</p></ion-col>
+            <ion-col col-6 text-right><p>{{getTotal(dest).trips}}</p></ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col col-6><p>Distance (mi):</p></ion-col>
+            <ion-col col-6 text-right><p>{{getTotal(dest).distance | number:'1.1-1' }}</p></ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col col-6><p>Time (min):</p></ion-col>
+            <ion-col col-6 text-right><p>{{getTotal(dest).time}}</p></ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col col-6><p>Expense:</p></ion-col>
+            <ion-col col-6 text-right><p>{{getTotal(dest).expenses | currency:'USD':true:'1.2-2'}}</p></ion-col>
+          </ion-row>
+        </ion-grid>
       </ion-item>
     </ion-list>
   </ion-card>
-
 </ion-content>

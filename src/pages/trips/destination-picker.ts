@@ -11,25 +11,27 @@ export class DestinationPicker {
 
   @ViewChild('searchInput') searchInput;
 
-  dests: Destination[];
-  filter: string;
+  dests: Destination[] = [];
+  filter: string = "";
 
   constructor(
     private destinationService: DestinationService,
     public params: NavParams,
     public viewController: ViewController,
     public navController: NavController) {
+  }
 
-    this.filter = params.get("dest") ? params.get("dest") : "";
+  ionViewWillEnter = () => {
     this.refresh();
   }
 
   ionViewDidEnter = () => {
+    this.filter = this.params.get("dest") || "";
     this.searchInput.setFocus();
   }
 
   refresh = () => {
-    this.dests = this.destinationService.query(-1);
+    this.destinationService.query(dd => this.dests = dd);
   }
 
   changeFilter = (evt) => {
