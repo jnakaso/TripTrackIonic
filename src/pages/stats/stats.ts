@@ -20,6 +20,7 @@ export class StatsPage {
     private events: Events) {
 
     events.subscribe('totals:changed', (result) => {
+      console.log("refreshing", result);
       this.refreshTotals();
       this.refreshDestTotals();
     });
@@ -46,9 +47,14 @@ export class StatsPage {
     });
   }
 
+  recalc = () => {
+    this.statsService.recalcTotals();
+  }
+
   getTotal = (dest) => {
     return this.desttotals.get(dest);
   }
+
   getDateRange = () => {
     switch (this.dateRange) {
       case "day": return DateRange.day;

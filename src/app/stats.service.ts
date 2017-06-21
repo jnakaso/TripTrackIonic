@@ -40,13 +40,11 @@ export class StatsService {
                     this.createEntry(range, today, filtered)
                         .then(total => resolve(total));
                 }));
-            let places = Array.from(new Set<string>(trips.map(t => t.destination)))
-                .map(dest => new Promise((resolve, reject) => {
-                    this.createDestTotalEntry(dest, trips.filter(t => t.destination == dest))
-                        .then(total => resolve(total));
-                }));
-            Promise.all(dates.concat(places))
-                .then(result => this.events.publish('totals:changed', result));
+            this.clearDestTotals().then((result) => {
+                Promise.all(Array.from(new Set<string>(trips.map(t => t.destination)))
+                    .map(dest => this.createDestTotalEntry(dest, trips.filter(t => t.destination == dest))))
+                    .then(result => this.events.publish('totals:changed', result));
+            });
         })
     }
 
@@ -63,6 +61,19 @@ export class StatsService {
         this.storage.get(key).then(tot => {
             success(tot ? tot : new Total());
         });
+    }
+
+    clearDestTotals = () => {
+        console.log("Clearing the old dests");
+        return new Promise((res, rej) => {
+            this.storage.keys()
+                .then(keys => {
+                    Promise.all(keys //
+                        .filter(k => k.startsWith(STORAGE_KEY_DEST_TOTAL))
+                        .map(k => this.storage.remove(k)))
+                        .then(result => res("Done clearing."));
+                });
+        })
     }
 
     queryDestTotals = (success: Function) => {
